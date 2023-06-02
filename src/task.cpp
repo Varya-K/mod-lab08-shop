@@ -7,8 +7,6 @@ Shop::Shop() :
     checkouts = new Checkout[0];
 }
 
-
-
 Shop::Shop(int _checkout_count,
     int _product_processing_time,
     int _max_line_length) :
@@ -17,7 +15,6 @@ Shop::Shop(int _checkout_count,
     max_line_length(_max_line_length) {
     checkouts = new Checkout[_checkout_count];
 }
-
 
 void Shop::Open() {
     
@@ -50,10 +47,8 @@ void Shop::Handle_customer(Customer customer) {
     }
     if ((int)line.size() < max_line_length) {
         
-        std::chrono::system_clock::time_point end = 
-                            std::chrono::system_clock::now();
-        sum_line_length+=line.size()* (long)std::chrono::duration_cast
-                    <std::chrono::milliseconds>(end-start_line_length).count();
+        std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
+        sum_line_length+=line.size()* (long)std::chrono::duration_cast<std::chrono::milliseconds>(end-start_line_length).count();
         line.push_back(customer);
         start_line_length = end;
     }
@@ -64,20 +59,15 @@ void Shop::Handle_customer(Customer customer) {
 }
 
 void Shop::serve(Customer customer, int checkout_number){
-    std::this_thread::sleep_for(std::chrono::milliseconds
-            (product_processing_time * customer.product_count));
+    std::this_thread::sleep_for(std::chrono::milliseconds(product_processing_time * customer.product_count));
     mu1.lock();
-    checkouts[checkout_number].sum_work_time += product_processing_time * 
-                                                        customer.product_count;
+    checkouts[checkout_number].sum_work_time += product_processing_time * customer.product_count;
     served_customers_count++;
-    std::chrono::system_clock::time_point end = 
-                                              std::chrono::system_clock::now();
-    sum_customer_time+= (long)std::chrono::duration_cast
-             <std::chrono::milliseconds>(end- customer.start_customer).count();
+    std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
+    sum_customer_time+= (long)std::chrono::duration_cast<std::chrono::milliseconds>(end- customer.start_customer).count();
     if (line.size() > 0) {
         Customer c = line.front();
-        sum_line_length += line.size() * (long)std::chrono::duration_cast
-                   <std::chrono::milliseconds>(end- start_line_length).count();
+        sum_line_length += line.size() * (long)std::chrono::duration_cast<std::chrono::milliseconds>(end- start_line_length).count();
         line.pop_front();
         start_line_length = end;
         mu1.unlock();
@@ -93,10 +83,8 @@ void Shop::Close() {
     for (int i = 0; i < checkout_count; i++) {
         checkouts[i].thrd->join();
     }
-    std::chrono::system_clock::time_point end = 
-                                              std::chrono::system_clock::now();
-    work_time = (long)std::chrono::duration_cast
-                           <std::chrono::milliseconds>(end-start_work).count();
+    std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
+    work_time = (long)std::chrono::duration_cast<std::chrono::milliseconds>(end-start_work).count();
 }
 
 int Shop::get_served_customers_count(){
@@ -111,8 +99,7 @@ double Shop::get_avarage_line_length() {
 }
 
 double Shop::get_avarage_customer_time() {
-    return (double)sum_customer_time / 
-                           (served_customers_count + unserved_customers_count);
+    return (double)sum_customer_time / (served_customers_count + unserved_customers_count);
 }
 
 double Shop::get_avarage_checkout_work_time() {
@@ -141,11 +128,10 @@ Model::Model(int _checkout_count, double _intensity_customer,
     max_line_length(_max_line_length),
     shop(_checkout_count, _product_processing_time, _max_line_length) {
 
-    double load_intensity = intensity_customer / (1000 / 
-        (product_processing_time * avarage_count_of_products));
+    double load_intensity = intensity_customer / (1000 / (product_processing_time * avarage_count_of_products));
     
-    //Поиск теоретической вероятности отказа системы, 
-    //относительной и абсолютной пропускной способности
+    //РџРѕРёСЃРє С‚РµРѕСЂРµС‚РёС‡РµСЃРєРѕР№ РІРµСЂРѕСЏС‚РЅРѕСЃС‚Рё РѕС‚РєР°Р·Р° СЃРёСЃС‚РµРјС‹, 
+    //РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕР№ Рё Р°Р±СЃРѕР»СЋС‚РЅРѕР№ РїСЂРѕРїСѓСЃРєРЅРѕР№ СЃРїРѕСЃРѕР±РЅРѕСЃС‚Рё
     double sum=1;
     double pow_p=1;
     long factorial = 1;
@@ -161,11 +147,9 @@ Model::Model(int _checkout_count, double _intensity_customer,
         sum += pow_p / (pow_n * factorial);
     }
     double probability_all_channels_are_free = pow(sum,-1);
-    theoretical_probability_of_rejection = probability_all_channels_are_free *
-                                                   pow_p / (pow_n * factorial);
+    theoretical_probability_of_rejection = probability_all_channels_are_free * pow_p / (pow_n * factorial);
     theoretical_relative_throughput = 1 - theoretical_probability_of_rejection;
-    theoretical_absolute_throughput = theoretical_relative_throughput *
-                                                            intensity_customer;
+    theoretical_absolute_throughput = theoretical_relative_throughput * intensity_customer;
     actual_probability_of_rejection = 0;
     actual_relative_throughput = 0;
     actual_absolute_throughput = 0;
@@ -186,47 +170,37 @@ int Model::get_random_number(double avarage, double standart_deviation) {
 }
 
 void Model::Run(int time_of_work) {
-    //Для рандомизации времени прихода клиентов и количества их продуктов 
-    //используем нормальное распределение случайной величины
+    //Р”Р»СЏ СЂР°РЅРґРѕРјРёР·Р°С†РёРё РІСЂРµРјРµРЅРё РїСЂРёС…РѕРґР° РєР»РёРµРЅС‚РѕРІ Рё РєРѕР»РёС‡РµСЃС‚РІР° РёС… РїСЂРѕРґСѓРєС‚РѕРІ 
+    //РёСЃРїРѕР»СЊР·СѓРµРј РЅРѕСЂРјР°Р»СЊРЅРѕРµ СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ СЃР»СѓС‡Р°Р№РЅРѕР№ РІРµР»РёС‡РёРЅС‹
 
     double avarage_time_between_clients = 1000 / intensity_customer;
-    double sd_time_between_clients = 0.7; //среднее квадратическое для
-                                            // времени между клиентами
-    double sd_product_count = 0.7;//среднее квадратичное количества продуктов
+    double sd_time_between_clients = 0.7; //СЃСЂРµРґРЅРµРµ РєРІР°РґСЂР°С‚РёС‡РµСЃРєРѕРµ РґР»СЏ
+                                            // РІСЂРµРјРµРЅРё РјРµР¶РґСѓ РєР»РёРµРЅС‚Р°РјРё
+    double sd_product_count = 0.7;//СЃСЂРµРґРЅРµРµ РєРІР°РґСЂР°С‚РёС‡РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІР° РїСЂРѕРґСѓРєС‚РѕРІ
     srand((int)time(0));
-    int time_between_customers = 
-      get_random_number(avarage_time_between_clients, sd_time_between_clients);
+    int time_between_customers = get_random_number(avarage_time_between_clients, sd_time_between_clients);
     long sum_time=time_between_customers;
     int id= 0;
     int sum_of_products = 0;
-    shop.Open(); // Открываем магазин
+    shop.Open(); // РћС‚РєСЂС‹РІР°РµРј РјР°РіР°Р·РёРЅ
     while (sum_time <= time_of_work) {
         id++;
         Customer c;
         c.id = id;
-        c.product_count = get_random_number(avarage_count_of_products, 
-                                                             sd_product_count);
+        c.product_count = get_random_number(avarage_count_of_products, sd_product_count);
         sum_of_products += c.product_count;
         shop.Handle_customer(c);
-        std::this_thread::sleep_for(std::chrono::milliseconds
-                                                     (time_between_customers));
-        time_between_customers = get_random_number
-                       (avarage_time_between_clients, sd_time_between_clients);
+        std::this_thread::sleep_for(std::chrono::milliseconds(time_between_customers));
+        time_between_customers = get_random_number(avarage_time_between_clients, sd_time_between_clients);
         sum_time += time_between_customers;
     }
     shop.Close();
 
-    int customers_count = shop.get_served_customers_count() + 
-                                           shop.get_unserved_customers_count();
-    actual_probability_of_rejection = 
-                 (double)shop.get_unserved_customers_count() / customers_count;
-    actual_relative_throughput = (double)shop.get_served_customers_count()/
-                                                               customers_count;
-    actual_absolute_throughput = shop.get_served_customers_count() / 
-                                           ((double)shop.get_work_time()/1000);
-
-    actual_avarage_count_of_products = (double)sum_of_products / 
-                                                               customers_count;
+    int customers_count = shop.get_served_customers_count() + shop.get_unserved_customers_count();
+    actual_probability_of_rejection = (double)shop.get_unserved_customers_count() / customers_count;
+    actual_relative_throughput = (double)shop.get_served_customers_count()/customers_count;
+    actual_absolute_throughput = shop.get_served_customers_count() / ((double)shop.get_work_time()/1000);
+    actual_avarage_count_of_products = (double)sum_of_products / customers_count;
     actual_intensity_of_customers = 1000/((double)sum_time / customers_count);
 
 }
@@ -285,10 +259,3 @@ double Model::get_actual_avarage_count_of_products() {
 double Model::get_actual_intensity_of_customers() {
     return actual_intensity_of_customers;
 }
-
-
-
-
-
-
-
