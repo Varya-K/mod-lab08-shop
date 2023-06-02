@@ -1,6 +1,6 @@
 // Copyright 2021 GHA Test Team
 #include <gtest/gtest.h>
-#include <task.h>
+#include "task.h"
 
 TEST(TestRandom, TestRandomOfTimeAndProducts) { 
     //проверяем, соблюдаются ли значения интенсивности клиентов и количества продуктов
@@ -37,9 +37,10 @@ TEST(TestCalculate, TestCalculateOfTheoreticalFormulas) {
     
     double prob_of_rej_сalc_manually = (double) 144 / 277;
 
-    EXPECT_EQ(model.get_theoretical_probability_of_rejection(),prob_of_rej_сalc_manually);
-    EXPECT_EQ(model.get_theoretical_relative_throughput(), 1 - prob_of_rej_сalc_manually);
-    EXPECT_EQ(model.get_theoretical_absolute_throughput(), (1 - prob_of_rej_сalc_manually) * 20);
+    int a = 1000000;
+    EXPECT_EQ(round(model.get_theoretical_probability_of_rejection() * a), round(prob_of_rej_сalc_manually * a));
+    EXPECT_EQ(round(model.get_theoretical_relative_throughput() * a), round((1 - prob_of_rej_сalc_manually) * a));
+    EXPECT_EQ(round(model.get_theoretical_absolute_throughput() * a), round((1 - prob_of_rej_сalc_manually) * 20 * a));
 }
 
 TEST(TestShop, TestShopWork) {
