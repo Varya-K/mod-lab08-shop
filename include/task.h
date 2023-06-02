@@ -3,6 +3,7 @@
 #include <chrono>
 #include <mutex>
 #include <ctime>
+#include <cmath>
 
 
        
@@ -21,23 +22,21 @@ struct Customer {
 
 class Shop {
  private:
-    int checkout_count; // количество касс
-    int product_processing_time; //время обработки товара на кассе
-    int max_line_length; // максимальная длина очереди
+    int checkout_count; // РєРѕР»РёС‡РµСЃС‚РІРѕ РєР°СЃСЃ
+    int product_processing_time; //РІСЂРµРјСЏ РѕР±СЂР°Р±РѕС‚РєРё С‚РѕРІР°СЂР° РЅР° РєР°СЃСЃРµ
+    int max_line_length; // РјР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅР° РѕС‡РµСЂРµРґРё
 
-    int served_customers_count=0; //количество обслуженных клиентов
-    int unserved_customers_count=0; // количество необслуженных клиентов
-    long sum_line_length=0; // сумма произведений длины линии на время для 
-                            // нахождения средней длины
-    long sum_customer_time=0; // суммарное время нахождения покупателя 
-                              // в очереди + на кассе
-    long work_time=0; // время работы магазина
+    int served_customers_count=0; //РєРѕР»РёС‡РµСЃС‚РІРѕ РѕР±СЃР»СѓР¶РµРЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ
+    int unserved_customers_count=0; // РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРµРѕР±СЃР»СѓР¶РµРЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ
+    long sum_line_length=0; // СЃСѓРјРјР° РїСЂРѕРёР·РІРµРґРµРЅРёР№ РґР»РёРЅС‹ Р»РёРЅРёРё РЅР° РІСЂРµРјСЏ РґР»СЏ РЅР°С…РѕР¶РґРµРЅРёСЏ СЃСЂРµРґРЅРµР№ РґР»РёРЅС‹
+    long sum_customer_time=0; // СЃСѓРјРјР°СЂРЅРѕРµ РІСЂРµРјСЏ РЅР°С…РѕР¶РґРµРЅРёСЏ РїРѕРєСѓРїР°С‚РµР»СЏ РІ РѕС‡РµСЂРµРґРё + РЅР° РєР°СЃСЃРµ
+    long work_time=0; // РІСЂРµРјСЏ СЂР°Р±РѕС‚С‹ РјР°РіР°Р·РёРЅР°
 
     std::chrono::system_clock::time_point start_work;
     std::chrono::system_clock::time_point start_line_length;
 
-    Checkout* checkouts; // массив касс
-    std::deque<Customer> line; // вектор клиентов в очереди
+    Checkout* checkouts; // РјР°СЃСЃРёРІ РєР°СЃСЃ
+    std::deque<Customer> line; // РІРµРєС‚РѕСЂ РєР»РёРµРЅС‚РѕРІ РІ РѕС‡РµСЂРµРґРё
 
     void serve(Customer customer, int checkout_number);
 
@@ -56,13 +55,13 @@ class Shop {
     void Close();
 
 
-    int get_served_customers_count(); //количество обслуженных клиентов
-    int get_unserved_customers_count(); // количество необслуженных клиентов
-    double get_avarage_line_length(); // средняя длина очереди
-    double get_avarage_customer_time(); // среднее время нахождения покупателя
-                                        // в очереди + на кассе
-    double get_avarage_checkout_work_time(); // среднее время работы кассы
-    double get_avarage_chechout_downtime(); // среднее время простоя кассы
+    int get_served_customers_count(); //РєРѕР»РёС‡РµСЃС‚РІРѕ РѕР±СЃР»СѓР¶РµРЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ
+    int get_unserved_customers_count(); // РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРµРѕР±СЃР»СѓР¶РµРЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ
+    double get_avarage_line_length(); // СЃСЂРµРґРЅСЏСЏ РґР»РёРЅР° РѕС‡РµСЂРµРґРё
+    double get_avarage_customer_time(); // СЃСЂРµРґРЅРµРµ РІСЂРµРјСЏ РЅР°С…РѕР¶РґРµРЅРёСЏ РїРѕРєСѓРїР°С‚РµР»СЏ
+                                        // РІ РѕС‡РµСЂРµРґРё + РЅР° РєР°СЃСЃРµ
+    double get_avarage_checkout_work_time(); // СЃСЂРµРґРЅРµРµ РІСЂРµРјСЏ СЂР°Р±РѕС‚С‹ РєР°СЃСЃС‹
+    double get_avarage_chechout_downtime(); // СЃСЂРµРґРЅРµРµ РІСЂРµРјСЏ РїСЂРѕСЃС‚РѕСЏ РєР°СЃСЃС‹
     long get_work_time();
 };
 
@@ -70,21 +69,21 @@ class Shop {
 class Model {
  private:
 
-    int checkout_count; // количество касс
-    int product_processing_time; // время обработки товара на кассе
-    int max_line_length; // максимальная длина очереди
-    double intensity_customer; // интенсивность потока клиентов
-    double avarage_count_of_products; // среднее количество товаров в тележке
+    int checkout_count; // РєРѕР»РёС‡РµСЃС‚РІРѕ РєР°СЃСЃ
+    int product_processing_time; // РІСЂРµРјСЏ РѕР±СЂР°Р±РѕС‚РєРё С‚РѕРІР°СЂР° РЅР° РєР°СЃСЃРµ
+    int max_line_length; // РјР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅР° РѕС‡РµСЂРµРґРё
+    double intensity_customer; // РёРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊ РїРѕС‚РѕРєР° РєР»РёРµРЅС‚РѕРІ
+    double avarage_count_of_products; // СЃСЂРµРґРЅРµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ С‚РѕРІР°СЂРѕРІ РІ С‚РµР»РµР¶РєРµ
 
     Shop shop;
 
-    double theoretical_probability_of_rejection; //теор. веротность отказа
-    double theoretical_relative_throughput; //теор. отн. пропускная способность
-    double theoretical_absolute_throughput; //теор. абс. пропускная способность
+    double theoretical_probability_of_rejection; //С‚РµРѕСЂРµС‚РёС‡РµСЃРєР°СЏ РІРµСЂРѕС‚РЅРѕСЃС‚СЊ РѕС‚РєР°Р·Р°
+    double theoretical_relative_throughput; //С‚РµРѕСЂРµС‚РёС‡РµСЃРєР°СЏ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅР°СЏ РїСЂРѕРїСѓСЃРєРЅР°СЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ
+    double theoretical_absolute_throughput; //С‚РµРѕСЂРµС‚РёС‡РµСЃРєР°СЏ Р°Р±СЃРѕР»СЋС‚РЅР°СЏ РїСЂРѕРїСѓСЃРєРЅР°СЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ
 
-    double actual_probability_of_rejection; // практическая веротность отказа
-    double actual_relative_throughput; // практ. отн. пропускная способность
-    double actual_absolute_throughput; // практ. абс. пропускная способность
+    double actual_probability_of_rejection; // РїСЂР°РєС‚РёС‡РµСЃРєР°СЏ РІРµСЂРѕС‚РЅРѕСЃС‚СЊ РѕС‚РєР°Р·Р°
+    double actual_relative_throughput; // РїСЂР°РєС‚РёС‡РµСЃРєР°СЏ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅР°СЏ РїСЂРѕРїСѓСЃРєРЅР°СЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ
+    double actual_absolute_throughput; // РїСЂР°РєС‚РёС‡РµСЃРєР°СЏ Р°Р±СЃРѕР»СЋС‚РЅР°СЏ РїСЂРѕРїСѓСЃРєРЅР°СЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ
 
 
     double actual_avarage_count_of_products;
@@ -97,21 +96,20 @@ class Model {
     void Run(int time_of_work);
     int get_random_number(double avarage, double standart_deviation);
 
-    double get_theoretical_probability_of_rejection();//теор. веротность отказа
-    double get_theoretical_relative_throughput();//теор. отн. проп. способность
-    double get_theoretical_absolute_throughput();//теор. абс. проп. способность
+    double get_theoretical_probability_of_rejection();//С‚РµРѕСЂРµС‚РёС‡РµСЃРєР°СЏ РІРµСЂРѕС‚РЅРѕСЃС‚СЊ РѕС‚РєР°Р·Р°
+    double get_theoretical_relative_throughput();//С‚РµРѕСЂРµС‚РёС‡РµСЃРєР°СЏ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅР°СЏ РїСЂРѕРїСѓСЃРєРЅР°СЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ
+    double get_theoretical_absolute_throughput();//С‚РµРѕСЂРµС‚РёС‡РµСЃРєР°СЏ Р°Р±СЃРѕР»Р±С‚РЅР°СЏ РїСЂРѕРїСѓСЃРєРЅР°СЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ
 
-    double get_actual_probability_of_rejection();//практ. веротность отказа
-    double get_actual_relative_throughput(); //практ. относ. проп. способность
-    double get_actual_absolute_throughput(); //практ. абc. проп. способность
+    double get_actual_probability_of_rejection();//РїСЂР°РєС‚РёС‡РµСЃРєР°СЏ РІРµСЂРѕС‚РЅРѕСЃС‚СЊ РѕС‚РєР°Р·Р°
+    double get_actual_relative_throughput(); //РїСЂР°РєС‚РёС‡РµСЃРєР°СЏ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅР°СЏ РїСЂРѕРїСѓСЃРєРЅР°СЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ
+    double get_actual_absolute_throughput(); //РїСЂР°РєС‚РёС‡РµСЃРєР°СЏ Р°Р±cРѕР»СЋС‚РЅР°СЏ РїСЂРѕРїСѓСЃРєРЅР°СЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ
 
-    int get_served_customers_count(); //количество обслуженных клиентов
-    int get_unserved_customers_count(); // количество необслуженных клиентов
-    double get_avarage_line_length(); // средняя длина очереди
-    double get_avarage_customer_time(); // среднее время нахождения покупателя
-                                        // в очереди + на кассе
-    double get_avarage_checkout_work_time(); // среднее время работы кассы
-    double get_avarage_chechout_downtime(); // среднее время простоя кассы
+    int get_served_customers_count(); //РєРѕР»РёС‡РµСЃС‚РІРѕ РѕР±СЃР»СѓР¶РµРЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ
+    int get_unserved_customers_count(); // РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРµРѕР±СЃР»СѓР¶РµРЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ
+    double get_avarage_line_length(); // СЃСЂРµРґРЅСЏСЏ РґР»РёРЅР° РѕС‡РµСЂРµРґРё
+    double get_avarage_customer_time(); // СЃСЂРµРґРЅРµРµ РІСЂРµРјСЏ РЅР°С…РѕР¶РґРµРЅРёСЏ РїРѕРєСѓРїР°С‚РµР»СЏ РІ РѕС‡РµСЂРµРґРё + РЅР° РєР°СЃСЃРµ
+    double get_avarage_checkout_work_time(); // СЃСЂРµРґРЅРµРµ РІСЂРµРјСЏ СЂР°Р±РѕС‚С‹ РєР°СЃСЃС‹
+    double get_avarage_chechout_downtime(); // СЃСЂРµРґРЅРµРµ РІСЂРµРјСЏ РїСЂРѕСЃС‚РѕСЏ РєР°СЃСЃС‹
     long get_work_time();
 
     double get_actual_avarage_count_of_products();
